@@ -16,4 +16,29 @@ jobs:
               run: date
 
 
+    second_job:
+        # second_job:
+        # This job runs after the first job on a self-hosted runner.
+        # It installs `jq` (a tool to work with JSON), checks out the code,
+        # and then runs TruffleHog to scan the `mysecrets` folder for secrets.
+        # It skips scanning the runner files to avoid false alarms.
+        # The scan results are shown in JSON format.
+        runs-on: self-hosted
+        needs: first_job
+        steps:
+            - name: Ensure Homebrew is up-to-date and install jq
+              run: |
+                arch -arm64 brew update
+                arch -arm64 brew install jq
 
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                 fetch-depth: 0
+            - name: This is the second job
+              run: echo "This is the second job, which runs after the first job."
+
+            - name: Secret Scanning
+              uses: trufflesecurity/trufflehog@main
+              with:
+               extra_args: --results=verified,unknown

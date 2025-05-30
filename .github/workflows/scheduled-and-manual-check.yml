@@ -1,0 +1,29 @@
+name: Scheduled and Manual Check
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Runs every day at 9 AM UTC
+   workflow_dispatch:  # Allows manual triggering of the workflow
+   description: 'Runs daily at 9 AM UTC and can be triggered manually.'
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run checks
+        run: |
+          # Replace with your actual check commands
+          echo "Running checks..."
+          # Example command
+          pytest tests/

@@ -1,0 +1,16 @@
+name: workflow-second-example
+
+on: push
+
+jobs: 
+    ascii_art_job:
+        runs-on: self-hosted
+        steps:
+            - name: Welcome to my second workflow
+              run: echo "Hello, world! This is the second workflow."
+
+            - name: List out all the files
+              run: ls -la
+
+            - name: Print the current date
+              run: date
