@@ -4,7 +4,7 @@ on: push
 
 jobs: 
     first_job:
-        runs-on: ubuntu-latest
+        runs-on: self-hosted
         steps:
             - name: Welcome to my first workflow
               run: echo "Hello, world!"
@@ -15,5 +15,5 @@ jobs:
             - name: Print the current date
               run: date
 
-              
+
 
