@@ -1,16 +1,32 @@
-name: workflow-second-example
+name: Generate ASCII Art
 
 on: push
 
-jobs: 
-    ascii_art_job:
-        runs-on: self-hosted
-        steps:
-            - name: Welcome to my second workflow
-              run: echo "Hello, world! This is the second workflow."
+jobs:
+  ascii_art_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Install Cowsay Program
+        run: sudo apt-get install -y cowsay
 
-            - name: List out all the files
-              run: ls -la
+      - name: Execute Cowsay commands
+        run: |
+          cowsay "Hello, world! This is the ASCII art job."
+          cowsay -f tux "Tux the penguin says hello!"
+          cowsay -f dragon "A dragon appears!"
+          cowsay -f ghostbusters "Who you gonna call?"
+      
+      - name: Execute Cowsay dragon commands
+        run: cowsay -f dragon "A dragon appears!" >> dragon.txt
 
-            - name: Print the current date
-              run: date
+      - name: Test file Exists
+        run: grep -i "dragon" dragon.txt || echo "Dragon not found in file."
+
+      - name: Read the dragon file
+        run: cat dragon.txt
+      
+      - name: List out all the files
+        run: ls -la
