@@ -1,3 +1,7 @@
+# This is a GitHub Actions workflow file that generates ASCII art, executes a shell script,
+# The idea is to demonstrate how to use concurrency in GitHub Actions,
+# allowing only one instance of the second job to run at a time.
+
 name: concurrency-demo
 
 on:

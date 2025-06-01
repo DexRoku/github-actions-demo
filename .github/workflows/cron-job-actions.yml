@@ -1,3 +1,9 @@
+# This is a GitHub Actions workflow file that generates ASCII art, executes a shell script,
+# The idea is to demonstrate how to use cron jobs in GitHub Actions,
+# allowing the job to run at scheduled intervals (e.g., every minute).
+# It consists of a single job that prints a message every minute.
+# The cron job is triggered by a workflow_dispatch event, allowing manual execution.
+
 name: Cron Job Actions
 
 on:
