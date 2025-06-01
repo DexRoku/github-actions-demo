@@ -3,42 +3,34 @@ name: My first workflow
 on: push
 
 jobs: 
-    first_job:
-        runs-on: self-hosted
-        steps:
-            - name: Welcome to my first workflow
-              run: echo "Hello, world!"
+  first_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Welcome to my first workflow
+        run: echo "Hello, world!"
 
-            - name: List out all the files
-              run: ls -la
+      - name: List out all the files
+        run: ls -la
 
-            - name: Print the current date
-              run: date
+      - name: Print the current date
+        run: date
 
+  second_job:
+    runs-on: ubuntu-latest
+    needs: first_job
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-    second_job:
-        # second_job:
-        # This job runs after the first job on a self-hosted runner.
-        # It installs `jq` (a tool to work with JSON), checks out the code,
-        # and then runs TruffleHog to scan the `mysecrets` folder for secrets.
-        # It skips scanning the runner files to avoid false alarms.
-        # The scan results are shown in JSON format.
-        runs-on: self-hosted
-        needs: first_job
-        steps:
-            - name: Ensure Homebrew is up-to-date and install jq
-              run: |
-                arch -arm64 brew update
-                arch -arm64 brew install jq
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-            - name: Checkout code
-              uses: actions/checkout@v4
-              with:
-                 fetch-depth: 0
-            - name: This is the second job
-              run: echo "This is the second job, which runs after the first job."
+      - name: This is the second job
+        run: echo "This is the second job, which runs after the first job."
 
-            - name: Secret Scanning
-              uses: trufflesecurity/trufflehog@main
-              with:
-               extra_args: --results=verified,unknown
+      - name: Secret Scanning
+        uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --results=verified,unknown
