@@ -57,7 +57,17 @@ jobs:
             echo "File does not exist."
             exit 1
           fi
-  
+      
+      - name: Display the downloaded artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ascii-output
+      
+      - name: Display the ASCII art from the artifact
+        run: |
+          echo "Displaying the ASCII art from the artifact:"
+          cat ascii_output.txt
+      
   deploy_job_3:
     runs-on: ubuntu-latest
     needs: test_job_2
