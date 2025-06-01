@@ -1,0 +1,14 @@
+name: Cron Job Actions
+on:
+  schedule:
+    - cron: '* * * * *'  # This cron expression runs the job every minute
+jobs:
+  cron_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cron job action
+        run: |
+          echo "Print Hi this is a cron job that runs every minute"
