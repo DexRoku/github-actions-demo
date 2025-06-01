@@ -98,12 +98,15 @@ jobs:
       - name: Install pyfiglet
         run: pip install pyfiglet
       
-      - name: list all files for debugging
-        run: ls -laR
-      
+      - name: Debug current directory
+        run: |
+          pwd
+          ls -la
+          ls -la .github/workflows
+
       - name: check if ASCII art script exists
         run: |
-          if [ -f ascii-art.py ]; then
+          if [ -f .github/workflows/ascii-art.py ]; then
             echo "ASCII art script exists."
           else
             echo "ASCII art script does not exist."
