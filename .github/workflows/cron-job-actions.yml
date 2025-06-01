@@ -1,7 +1,14 @@
 name: Cron Job Actions
+
 on:
-  schedule:
-    - cron: '* * * * *'  # This cron expression runs the job every minute
+  workflow_dispatch:
+    inputs:
+      run_now:
+        description: 'Run the cron job immediately'
+        required: false
+        default: 'false'
+#   schedule:
+#     - cron: '* * * * *'  # This cron expression runs the job every minute
 jobs:
   cron_job:
     runs-on: ubuntu-latest
