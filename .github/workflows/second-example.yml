@@ -1,3 +1,9 @@
+# This is a GitHub Actions workflow file that generates ASCII art, executes a shell script,
+# and runs a Python script to display ASCII art. It consists of three jobs: build_job_1, test_job_2, and deploy_job_3.
+# The idea is to use different jobs stages to demonstrate how to generate ASCII art in various ways,
+# including using a shell script and a Python script. The workflow also includes steps to check for file existence,
+# upload and download artifacts, and perform basic debugging tasks.
+
 name: Generate ASCII Art
 
 on: push
