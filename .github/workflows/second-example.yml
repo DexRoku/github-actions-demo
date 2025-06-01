@@ -18,15 +18,10 @@ jobs:
           cowsay -f tux "Tux the penguin says hello!"
           cowsay -f dragon "A dragon appears!"
           cowsay -f ghostbusters "Who you gonna call?"
-      
-      - name: Execute Cowsay dragon commands
-        run: cowsay -f dragon "A dragon appears!" >> dragon.txt
+          cowsay -f turtle "Slow and steady wins the race."
+          cowsay -f sheep "Baa baa black sheep, have you any wool?"
+          cowsay -f elephant "An elephant never forgets!"
+          cowsay -f bunny "Hoppy Easter!"
+          cowsay -f koala "Koalas are cute and cuddly!"
+          cowsay -f tux "Tux is back with more ASCII art!"
 
-      - name: Test file Exists
-        run: grep -i "dragon" dragon.txt || echo "Dragon not found in file."
-
-      - name: Read the dragon file
-        run: cat dragon.txt
-      
-      - name: List out all the files
-        run: ls -la
