@@ -1,0 +1,38 @@
+name: concurrency-demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_now:
+        description: 'Run the cron job immediately'
+        required: false
+        default: 'false'
+
+jobs: 
+  first_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Welcome to my first workflow
+        run: echo "Hello, world!"
+
+      - name: List out all the files
+        run: ls -la
+
+      - name: Print the current date
+        run: date
+    
+  second_job:
+    concurrency: 
+      group: demo-concurrency
+      cancel-in-progress: true  # This will cancel any in-progress runs of this job if a new one is triggered    
+    runs-on: ubuntu-latest
+    needs: first_job
+    steps:
+      - name: Print the current date
+        run: date
+    
+      - name: Sleep for 10000 seconds
+        run: sleep 10000
+        
+      - name: This is the second job
+        run: echo "This is the second job, which runs after the first job."
