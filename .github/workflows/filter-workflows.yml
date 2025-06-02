@@ -1,0 +1,19 @@
+name: Filter-Workflows
+
+on: 
+    workflow_dispatch:
+    push:
+      branches:
+        - main
+        - ! feature/*
+    pull_request:
+      types: [opened, synchronize, reopened]
+      paths-ignore:
+        - README.md
+
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print hello world
+        run: echo "Hello, world!"
