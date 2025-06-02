@@ -1,6 +1,8 @@
 name: Context Workflow
 # This workflow demonstrates how to access and dump various contexts in GitHub Actions.
-on: push
+on: 
+  workflow_dispatch:
+  push:
 
 jobs:
   dump_contexts_to_log:
@@ -34,3 +36,15 @@ jobs:
             echo "Job status is not successful"
             exit 1
           fi
+
+  deploy_job:
+    needs: dump_contexts_to_log
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # This job will only run if the ref is main branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Only run if the ref is main branch
+        run: echo "This job will only run if the ref is main branch"

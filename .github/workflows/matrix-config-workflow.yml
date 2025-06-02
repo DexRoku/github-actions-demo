@@ -12,7 +12,7 @@ on:
         - main
 
 jobs: 
-    deploy-on-ubuntu:
+    deploy-on-ubuntu-and-windows:
       runs-on: ubuntu-latest
       strategy:
         fail-fast: false
@@ -41,7 +41,6 @@ jobs:
           shell: pwsh
           run: |
             echo "Running on ${{ matrix.os }}"
-            Get-ComputerInfo | Select-Object -Property WindowsVersion, WindowsBuildLabEx
     
 
 
