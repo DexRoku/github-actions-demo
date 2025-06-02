@@ -1,0 +1,19 @@
+name: Repository Dispatch Listener
+
+on:
+  repository_dispatch:
+    types: [custom-event]
+
+jobs:
+  dispatch_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print custom payload
+        run: echo "Payload:" ${{ toJson(github.event.client_payload) }}"
+
+
+
+# curl -X POST https://api.github.com/repos/OWNER/REPO/dispatches \
+#   -H "Accept: application/vnd.github+json" \
+#   -H "Authorization: Bearer YOUR_PERSONAL_ACCESS_TOKEN" \
+#   -d '{"event_type":"custom-event", "client_payload": {"key": "value"}}'
