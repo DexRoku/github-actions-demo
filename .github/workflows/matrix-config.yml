@@ -1,3 +1,8 @@
+# This github actions workflow file demonstrates how to use a matrix strategy to run jobs on different operating systems and Python versions.
+# It includes steps to check out the code, print the OS version, and run Python commands.
+# It showcases how to use different strategies for running jobs in parallel across multiple environments.
+# Fail-fast, max-parallel, and exclusion strategies are used to control the execution of jobs.
+
 name: Matrix Config
 
 on:
@@ -9,6 +14,8 @@ jobs:
     deploy-on-ubuntu:
       runs-on: ubuntu-latest
       strategy:
+        fail-fast: false
+        max-parallel: 2
         matrix:
           os: [ubuntu-latest, ubuntu-22.04, ubuntu-20.04, windows-latest, windows-2022, windows-2019]
           python-version: [3.8, 3.9, 3.10, 3.11]
