@@ -1,24 +1,35 @@
-name: context-demo
-
+name: Context testing
 on: push
-# This workflow demonstrates the use of the runner context in GitHub Actions.
 
 jobs:
-  RunnerContextDemo:
+  dump_contexts_to_log:
     runs-on: ubuntu-latest
     steps:
-      - name: Welcome to my first workflow
-        run: echo "Hello, world!"
-
-      - name: List out all the files
-        run: ls -la
-
-      - name: Print the current date
-        run: date
-      
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
       - name: Dump runner context
         env:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump secrets context
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+        run: echo "$SECRETS_CONTEXT"
+      - name: check if the job context is successful
         run: |
-          echo "Runner context:"
-          echo "$RUNNER_CONTEXT" | jq '.'
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "Job status is successful"
+          else
+            echo "Job status is not successful"
+            exit 1
+          fi
