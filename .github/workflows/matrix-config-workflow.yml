@@ -3,7 +3,8 @@
 # It showcases how to use different strategies for running jobs in parallel across multiple environments.
 # Fail-fast, max-parallel, and exclusion strategies are used to control the execution of jobs.
 
-name: Matrix Config
+name: Matrix Workflow
+# The idea is to demonstrate how to use a matrix strategy to run jobs on different operating systems and Python versions.
 
 on:
     push:

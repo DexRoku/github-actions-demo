@@ -2,7 +2,7 @@
 # The idea is to demonstrate how to create a simple workflow with multiple jobs,
 # and runs a Python script to display ASCII art. It consists of two jobs: first_job and second_job.
 # Also uses the trufflesecurity/trufflehog action for secret scanning.
-name: My first workflow
+name: First Workflow
 
 on: push
 

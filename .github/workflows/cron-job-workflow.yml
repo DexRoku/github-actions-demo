@@ -4,7 +4,8 @@
 # It consists of a single job that prints a message every minute.
 # The cron job is triggered by a workflow_dispatch event, allowing manual execution.
 
-name: Cron Job Actions
+name: Cron Job Workflow
+# The idea is to demonstrate how to use cron jobs in GitHub Actions,
 
 on:
   workflow_dispatch:

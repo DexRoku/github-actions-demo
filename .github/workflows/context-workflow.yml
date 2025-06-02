@@ -1,4 +1,5 @@
-name: Context testing
+name: Context Workflow
+# This workflow demonstrates how to access and dump various contexts in GitHub Actions.
 on: push
 
 jobs:
