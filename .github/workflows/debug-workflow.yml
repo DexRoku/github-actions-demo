@@ -1,0 +1,37 @@
+name: Debug-Workflow
+
+on:
+  workflow_dispatch:
+  push:
+
+env:
+    User_1: "User 1"
+    User_2: "User 2"
+
+
+jobs:
+    debug_job:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+    
+        - name: Print environment variables
+          run: |
+            echo "User 1: ${{ env.User_1 }}"
+            echo "User 2: ${{ env.User_2 }}"
+        
+        - name: Set User 1 as Username
+          run: |
+            echo "Setting User 1 as username"
+            echo "USERNAME=${{ env.User_1 }}" >> $GITHUB_ENV
+        
+        - name: Print Username
+          run: |
+            echo "Username is:"" ${{ env.USERNAME }}"
+            exit 1  # This will cause the job to fail, demonstrating error handling in GitHub Actions
+
+
+
+
+        
