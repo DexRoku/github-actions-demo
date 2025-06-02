@@ -48,3 +48,6 @@ jobs:
 
       - name: Only run if the ref is main branch
         run: echo "This job will only run if the ref is main branch"
+      
+      - name: Print the current branch
+        run: echo "Current branch is:" " ${{ github.ref }}"
