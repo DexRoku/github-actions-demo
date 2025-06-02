@@ -1,0 +1,30 @@
+name: Matrix Config
+
+on:
+    push:
+        branches:
+        - main
+
+jobs: 
+    deploy-on-ubuntu:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          os: [ubuntu-latest, ubuntu-22.04, ubuntu-20.04, windows-latest, windows-2022, windows-2019]
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Print the OS version(Ubuntu)
+          if: startsWith(matrix.os, 'ubuntu')
+          run: |
+            echo "Running on ${{ matrix.os }}"
+            lsb_release -a
+        - name: Print the OS version(Windows)
+          if: startsWith(matrix.os, 'windows')
+          shell: pwsh
+          run: |
+            echo "Running on ${{ matrix.os }}"
+            Get-ComputerInfo | Select-Object -Property WindowsVersion, WindowsBuildLabEx
+
+        
