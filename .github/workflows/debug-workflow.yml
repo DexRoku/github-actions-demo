@@ -28,7 +28,7 @@ jobs:
         
         - name: Print Username
           run: |
-            echo "Username is:"" ${{ env.USERNAME }}"
+            echo "Username is:"" $USERNAME"
             exit 1  # This will cause the job to fail, demonstrating error handling in GitHub Actions
 
 

@@ -1,0 +1,84 @@
+{
+  "id": 43315685955,
+  "run_id": 15395671851,
+  "workflow_name": "Debug-Workflow",
+  "head_branch": "main",
+  "run_url": "https://api.github.com/repos/DexRoku/github-actions-demo/actions/runs/15395671851",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOOzZrZs8AAAAKFdDqQw",
+  "head_sha": "a3395426475abbe455991e4ca88e0fa2c3fb8dbb",
+  "url": "https://api.github.com/repos/DexRoku/github-actions-demo/actions/jobs/43315685955",
+  "html_url": "https://github.com/DexRoku/github-actions-demo/actions/runs/15395671851/job/43315685955",
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2025-06-02T15:01:28Z",
+  "started_at": "2025-06-02T15:01:32Z",
+  "completed_at": "2025-06-02T15:01:39Z",
+  "name": "debug_job",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2025-06-02T15:01:33Z",
+      "completed_at": "2025-06-02T15:01:34Z"
+    },
+    {
+      "name": "Checkout code",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2025-06-02T15:01:34Z",
+      "completed_at": "2025-06-02T15:01:35Z"
+    },
+    {
+      "name": "Print environment variables",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2025-06-02T15:01:35Z",
+      "completed_at": "2025-06-02T15:01:35Z"
+    },
+    {
+      "name": "Set User 1 as Username",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2025-06-02T15:01:35Z",
+      "completed_at": "2025-06-02T15:01:35Z"
+    },
+    {
+      "name": "Print Username",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 5,
+      "started_at": "2025-06-02T15:01:35Z",
+      "completed_at": "2025-06-02T15:01:35Z"
+    },
+    {
+      "name": "Post Checkout code",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2025-06-02T15:01:35Z",
+      "completed_at": "2025-06-02T15:01:35Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2025-06-02T15:01:35Z",
+      "completed_at": "2025-06-02T15:01:35Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/DexRoku/github-actions-demo/check-runs/43315685955",
+  "labels": [
+    "ubuntu-latest"
+  ],
+  "runner_id": 1000001190,
+  "runner_name": "GitHub Actions 1000001190",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}
