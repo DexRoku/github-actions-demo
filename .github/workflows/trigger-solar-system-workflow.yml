@@ -1,0 +1,16 @@
+name: Trigger Solar System Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-remote-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Forked Repo (Solar System)
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.TOKEN }}" \
+            https://api.github.com/repos/DexRoku/solar-system/dispatches \
+            -d '{"event_type":"run-solar-system-tests"}'
