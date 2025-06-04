@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	_ "golang.org/x/mod/modfile" // dummy import to force go.sum
+)
 
 func main() {
 	fmt.Println("Hello, GitHub Actions!")
