@@ -1,4 +1,4 @@
-name: Go Cache Example
+name: Go CI with Caching
 
 on:
   push:
@@ -7,12 +7,20 @@ on:
 
 jobs:
   build-go:
-    name: Build Go App with Cache
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Debug ls root
+        run: ls -la
+
+      - name: Debug ls go-app
+        run: ls -la go-app
+
+      - name: Check go.mod
+        run: cat go-app/go.mod
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -25,15 +33,22 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('go-app/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
       - name: Download Dependencies
         run: go mod download
+        working-directory: go-app
 
       - name: Build
-        run: go build ./...
+        run: go build -o app
+        working-directory: go-app
+
+      - name: Run Application
+        run: ./app
+        working-directory: go-app
 
       - name: Run Tests
         run: go test ./...
+        working-directory: go-app
