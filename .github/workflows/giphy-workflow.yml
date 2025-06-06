@@ -1,0 +1,83 @@
+name: Giphy Pull Request Commenter
+
+on:
+  pull_request:
+    types: [opened, synchronize] # Trigger when a PR is opened or new commits are pushed to it
+
+jobs:
+  comment_with_giphy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Optional: Explicitly install jq just to be absolutely sure, though it's usually pre-installed
+      - name: Ensure jq is installed
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      - name: Fetch Giphy Sticker
+        id: get_giphy_sticker # Assign an ID to this step to reference its outputs
+        run: |
+          GIPHY_SEARCH_TERM="good job" # Customize your search term, e.g., "awesome", "success", "cat"
+          
+          # Construct the Giphy API URL using your secret key
+          GIPHY_API_URL="https://api.giphy.com/v1/gifs/search?api_key=${{ secrets.GIPHY_API_KEY }}&q=${GIPHY_SEARCH_TERM}&limit=1"
+
+          echo "Attempting to fetch Giphy sticker for: '$GIPHY_SEARCH_TERM'"
+          echo "API URL being called: $GIPHY_API_URL"
+
+          # Execute curl, capturing all output (stdout and stderr) and the exit code
+          # -s: silent (no progress bar)
+          # -L: follow redirects
+          # -f: fail silently on HTTP errors (e.g., 4xx, 5xx) - useful for checking exit code
+          # 2>&1: redirect stderr to stdout so all curl output is captured
+          CURL_OUTPUT=$(curl -s -L -f "$GIPHY_API_URL" 2>&1)
+          CURL_EXIT_CODE=$? # Capture the exit code of the curl command
+
+          echo "--- Raw Curl Output / Giphy API Response ---"
+          echo "$CURL_OUTPUT"
+          echo "--- Curl Exit Code: $CURL_EXIT_CODE ---"
+
+          # Check if curl command itself failed
+          if [ "$CURL_EXIT_CODE" -ne 0 ]; then
+            echo "Error: curl command failed with exit code $CURL_EXIT_CODE."
+            echo "This usually indicates a network issue, invalid URL, or Giphy API problem."
+            exit 1 # Fail this GitHub Actions step
+          fi
+
+          # Attempt to parse the response with jq.
+          # jq -e . > /dev/null: Checks if the input is valid JSON. Exits non-zero if not.
+          if ! echo "$CURL_OUTPUT" | jq -e . > /dev/null; then
+            echo "Error: Giphy API response is not valid JSON or is empty. Cannot parse with jq."
+            echo "Full response: $CURL_OUTPUT"
+            exit 1
+          fi
+
+          # Extract the GIF URL using jq
+          GIF_URL=$(echo "$CURL_OUTPUT" | jq -r '.data[0].images.downsized_medium.url')
+
+          # Check if GIF_URL is empty or literally "null" (which jq might return if the path doesn't exist)
+          if [ -z "$GIF_URL" ] || [ "$GIF_URL" == "null" ]; then
+            echo "Error: Could not extract GIF URL from Giphy API response, or no GIF found for '$GIPHY_SEARCH_TERM'."
+            echo "Full Giphy API Response (for context of failed GIF extraction): $CURL_OUTPUT"
+            exit 1 # Fail this GitHub Actions step
+          fi
+
+          echo "Successfully extracted GIF URL: $GIF_URL"
+          
+          # Set the output variable for subsequent steps
+          echo "GIF_URL=$GIF_URL" >> $GITHUB_OUTPUT
+
+        shell: bash # Ensure the script runs in bash
+
+      - name: Comment on Pull Request
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # Your GitHub PAT with 'repo' scope
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Awesome work on this pull request! Here's a little something for you:
+
+            ![Giphy Sticker](${{ steps.get_giphy_sticker.outputs.GIF_URL }})
+
+            Keep up the great coding!
