@@ -1,0 +1,18 @@
+name: github-action-giphy
+
+description: A GitHub Action to fetch a random Giphy image based on a search term.
+
+inputs:
+  github_token:
+    description: 'GitHub token for authentication'
+    required: true
+  giphy_api_key:
+    description: 'Giphy API key for fetching images'
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.github_token }}
+    - ${{ inputs.giphy_api_key }}
