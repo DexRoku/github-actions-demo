@@ -1,0 +1,39 @@
+name: Giphy Pull Request Commenter
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  comment_with_giphy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Giphy Sticker
+        id: get_giphy_sticker
+        run: |
+          GIPHY_SEARCH_TERM="good job" # Customize your search term
+          GIPHY_API_URL="https://api.giphy.com/v1/gifs/search?api_key=${{ secrets.GIPHY_API_KEY }}&q=${GIPHY_SEARCH_TERM}&limit=1"
+
+          GIF_URL=$(curl -s -L "$GIPHY_API_URL" | jq -r '.data[0].images.downsized_medium.url')
+
+          if [ -z "$GIF_URL" ]; then
+            echo "Error: Could not fetch GIF URL from Giphy API."
+            exit 1
+          fi
+
+          echo "GIF_URL=$GIF_URL" >> $GITHUB_OUTPUT
+
+        shell: bash
+
+      - name: Comment on Pull Request
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }} # Use your PAT here
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Hey there! Thanks for opening this PR. Here's a little something for you:
+
+            ![Giphy Sticker](${{ steps.get_giphy_sticker.outputs.GIF_URL }})
+
+            Looking forward to reviewing it!
