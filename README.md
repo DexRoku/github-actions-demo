@@ -38,7 +38,6 @@ The goal of this project is to:
     └── workflows/
         └── main.yml        # GitHub Actions workflow file
 ```
-
 ---
 
 ## ⚙️ What This Workflow Does
