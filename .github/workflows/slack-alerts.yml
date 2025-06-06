@@ -1,0 +1,44 @@
+name: CI with Slack Notification
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Simulate build/test step
+        run: |
+          echo "Running some tests..."
+          # Uncomment this line to simulate a failure:
+          # exit 1
+
+    # Send Slack message on success or failure
+    # Always runs, but conditionally sends success/failure messages
+      - name: Notify Slack on success
+        if: ${{ success() }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+            payload: |
+              {
+                "text": ":white_check_mark: GitHub Workflow *passed* for `${{ github.repository }}` on `${{ github.ref }}`"
+              }
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify Slack on failure
+        if: ${{ failure() }}
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+            payload: |
+              {
+                "text": ":x: GitHub Workflow *failed* for `${{ github.repository }}` on `${{ github.ref }}`"
+              }
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
