@@ -1,0 +1,45 @@
+name: Deploy Go App to AWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy-to-aws:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Test AWS CLI
+        run: aws sts get-caller-identity
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Confirm ECR Login
+        run: |
+          echo "Logged in to ECR registry: ${{ steps.login-ecr.outputs.registry }}"
+          aws ecr describe-repositories
+    
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        env:
+          ECR_REGISTRY: 533267396259.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: go-app
+          IMAGE_TAG: latest
+        with:
+          context: ./go-app
+          push: true
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+

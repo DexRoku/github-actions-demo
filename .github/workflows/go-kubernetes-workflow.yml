@@ -127,7 +127,6 @@ jobs:
             kubectl apply -f service.yml --context kind-dev-cluster
             kubectl get deployments --context kind-dev-cluster
 
-
   deploy-prod:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
