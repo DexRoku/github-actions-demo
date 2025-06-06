@@ -1,0 +1,16 @@
+name: "Giphy"
+
+on: 
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, reopened, synchronize]
+    
+jobs:
+  giphy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mkramb/giphy-action@master
+      with:
+        giphy-secret: ${{ secrets.GIPHY_API_KEY }}
+        github-secret: ${{ secrets.GITHUB_TOKEN }}
