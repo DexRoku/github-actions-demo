@@ -1,0 +1,18 @@
+name: Giphy Commenter
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+
+jobs:
+  giphy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate and post Giphy comment
+        uses: peter-evans/giphy-generator@v2
+        with:
+          giphy-api-key: ${{ secrets.GIPHY_API_KEY }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
