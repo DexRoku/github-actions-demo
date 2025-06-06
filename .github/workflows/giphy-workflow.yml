@@ -1,0 +1,41 @@
+name: GIPHY Generator 
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  giphy-generator:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract comment text
+        id: extract
+        run: echo "SEARCH_QUERY=$(echo '${{ github.event.comment.body }}' | tr -d '/')" >> $GITHUB_ENV
+
+      - name: Search Giphy and comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
+          SEARCH_QUERY: ${{ env.SEARCH_QUERY }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Searching for GIF with query: $SEARCH_QUERY"
+
+          # Query Giphy API for a GIF URL
+          GIF_URL=$(curl -sG https://api.giphy.com/v1/gifs/search \
+            --data-urlencode "api_key=$GIPHY_API_KEY" \
+            --data-urlencode "q=$SEARCH_QUERY" \
+            --data-urlencode "limit=1" \
+            | jq -r '.data[0].url')
+
+          echo "Found GIF: $GIF_URL"
+
+          # Post a comment on the issue/pr with the GIF URL
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/$REPO/issues/$ISSUE_NUMBER/comments \
+            -d "{\"body\": \"$GIF_URL\"}"
