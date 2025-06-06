@@ -1,4 +1,4 @@
-name: Deploy Go App to AWS
+name: Deploy Go Docker file to AWS ECR Registry
 
 on:
   push:
