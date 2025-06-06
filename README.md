@@ -1,36 +1,69 @@
 # GitHub Actions Project
 
-This repository is a simple project to learn and experiment with **GitHub Actions** — GitHub's built-in CI/CD automation tool.
+This repository contains a simple Go application and a Kubernetes deployment setup, used to learn and experiment with **GitHub Actions** — GitHub's built-in CI/CD automation tool.
+
+---
 
 ## 🚀 Purpose
 
 The goal of this project is to:
 
 * Understand how GitHub Actions work
-* Create and run workflows on push, pull requests, or other events
-* Learn basic CI concepts like jobs, steps, actions, and environment variables
+* Build and test a Go application
+* Build and push a Docker image
+* Deploy the application to local Kubernetes clusters using `kind`
+* Learn CI/CD concepts like workflows, jobs, caching, and multi-environment deployment
+
+---
 
 ## 📁 Repository Structure
 
 ```
 .
-├── .github
-│   └── workflows
-│       └── main.yml      # Example GitHub Actions workflow file
-├── src/                  # Sample source code (if any)
-├── README.md             # This file
-└── ...
+├── README.md
+├── go-app/                 # Go application source code
+│   ├── Dockerfile          # Dockerfile to containerize the app
+│   ├── go.mod              # Go module file
+│   ├── go.sum              # Go dependencies lock file
+│   ├── main.go             # Go application entry point
+│   └── main_test.go        # Unit tests for the Go app
+├── k8s/                    # Kubernetes deployment files
+│   ├── prod/               # Production deployment manifests
+│   │   ├── deployment.yml
+│   │   └── service.yml
+│   └── test/               # Development/test deployment manifests
+│       ├── deployment.yml
+│       └── service.yml
+└── .github/
+    └── workflows/
+        └── main.yml        # GitHub Actions workflow file
 ```
+
+---
 
 ## ⚙️ What This Workflow Does
 
-The example workflow (`main.yml`) currently does the following:
+The GitHub Actions workflow (`main.yml`) includes the following jobs:
 
-* Triggers on every push to the `main` branch
-* Checks out the repository code
-* Runs a basic script (e.g., `echo Hello World`, or other commands)
+### 🔨 Build & Test
 
-You can find it here: [.github/workflows/main.yml](.github/workflows/main.yml)
+* Triggers on push to `main` or manual `workflow_dispatch`
+* Checks out the code
+* Sets up Go environment
+* Caches dependencies
+* Runs unit tests
+
+### 🐳 Docker Image
+
+* Builds and pushes the Docker image to Docker Hub
+
+### ☸️ Deploy to Kubernetes
+
+* Creates local `kind` clusters (`dev-cluster`, `prod-cluster`)
+* Pulls and loads the Docker image into the cluster
+* Applies Kubernetes manifests for `test` and `prod` environments
+
+---
 
 ## ✅ How to Use
 
@@ -41,22 +74,31 @@ You can find it here: [.github/workflows/main.yml](.github/workflows/main.yml)
    cd github-actions-demo
    ```
 
-2. Make changes and push them to GitHub.
+2. Push changes to trigger the workflow
 
-3. Go to the **Actions** tab in your GitHub repo to see the workflow run.
+3. Monitor the run in the **Actions** tab on GitHub
+
+---
 
 ## 📚 Useful Resources
 
 * [GitHub Actions Documentation](https://docs.github.com/en/actions)
 * [Awesome Actions (Community-curated list)](https://github.com/sdras/awesome-actions)
 * [Creating a Workflow](https://docs.github.com/en/actions/using-workflows)
+* [Go Programming Language](https://go.dev/)
+* [kind - Kubernetes IN Docker](https://kind.sigs.k8s.io/)
+
+---
 
 ## 🚰 Future Improvements
 
-* Add test scripts
-* Run linters and code formatters
-* Build a Docker image
-* Deploy to a test environment
+* Add linter and formatter checks
+* Add integration testing
+* Add Helm chart support for deployment
+* Add GitHub Pages for documentation
+
+---
 
 ## 🧑‍💻 Author
+
 Created by [Rohith Raju](https://github.com/DexRoku)
