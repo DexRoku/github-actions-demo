@@ -3,7 +3,6 @@
 This repository contains a simple Go application and a Kubernetes deployment setup, used to learn and experiment with **GitHub Actions** — GitHub's built-in CI/CD automation tool.
 
 ---
-
 ## 🚀 Purpose
 
 The goal of this project is to:
