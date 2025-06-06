@@ -2,7 +2,7 @@
 
 This repository contains a simple Go application and a Kubernetes deployment setup, used to learn and experiment with **GitHub Actions** — GitHub's built-in CI/CD automation tool.
 
----
+----
 
 ## 🚀 Purpose
 
@@ -14,7 +14,7 @@ The goal of this project is to:
 * Deploy the application to local Kubernetes clusters using `kind`
 * Learn CI/CD concepts like workflows, jobs, caching, and multi-environment deployment
 
----
+----
 
 ## 📁 Repository Structure
 
@@ -39,7 +39,7 @@ The goal of this project is to:
         └── main.yml        # GitHub Actions workflow file
 ```
 
----
+----
 
 ## ⚙️ What This Workflow Does
 
