@@ -1,0 +1,22 @@
+on:
+
+  pull_request:
+    types: [opened, edited]
+
+jobs:
+  giphy:
+    runs-on: ubuntu-latest
+    permissions:
+      issue: write
+      pull-request: write
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Post the comment
+        uses: ./
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          giphy_api_key: ${{ secrets.GIPHY_API_KEY }}
