@@ -1,0 +1,23 @@
+name: giphy-workflow
+
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+jobs:
+    giphy_job:
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write  # Required to post comments on issues
+            pull-requests: write  # Required to post comments on PRs
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Post PR comment with Giphy
+              uses: actions/github-script@v6
+              with:
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                giphy-api-key: ${{ secrets.GIPHY_API_KEY }}
