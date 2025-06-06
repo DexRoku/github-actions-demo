@@ -1,5 +1,4 @@
-name: Kubernetes Go App Workflow with cache and Docker
-# This workflow builds a Go application, runs tests, builds a Docker image, and deploys it to Kubernetes clusters using kind.
+name: Kubernetes Go App Workflow
 
 on:
   push:
@@ -7,29 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-go:
+  setup:
     runs-on: ubuntu-latest
-
+    outputs:
+      go-cache-key: ${{ steps.cache-key.outputs.key }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Debug ls root
-        run: ls -la
-
-      - name: Debug ls go-app
-        run: ls -la go-app
-
-      - name: Check go.mod
-        run: cat go-app/go.mod
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: 1.22
-    
-      - name: Debug go.sum location
-        run: ls -l go-app/go.sum
+
+      - name: Generate Cache Key
+        id: cache-key
+        run: echo "key=${{ runner.os }}-go-${{ hashFiles('go-app/go.sum') }}" >> $GITHUB_OUTPUT
 
       - name: Cache Go Modules
         uses: actions/cache@v4
@@ -37,75 +29,118 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('go-app/go.sum') }}
+          key: ${{ steps.cache-key.outputs.key }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22
 
       - name: Download Dependencies
         run: go mod download
         working-directory: go-app
 
-      - name: Build
+      - name: Build Go App
         run: go build -o app
-        working-directory: go-app
-
-      - name: Run Application
-        run: ./app
         working-directory: go-app
 
       - name: Run Tests
         run: go test ./...
         working-directory: go-app
-    
-  docker-build:
-    runs-on: ubuntu-latest
-    needs: build-go
 
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-    
+
       - name: Docker Login
         uses: docker/login-action@v2
         with:
           registry: docker.io
           username: "${{ secrets.USERNAME }}"
           password: "${{ secrets.PASSWORD }}"
-        
-      - name: Docker login success
-        run: echo "Docker login successful"
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
-            context: go-app
-            push: true
-            tags: roku15/go-app:latest
+          context: go-app
+          push: true
+          tags: roku15/go-app:latest
 
-  dev-deploy:
-    if: contains(github.ref, 'refs/heads/feature')
+  setup-kind:
     runs-on: ubuntu-latest
-    needs: docker-build
-    env:
-      KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+    needs: docker
+    outputs:
+      clusters: "dev-cluster,prod-cluster"
+    steps:
+      - name: Install kind
+        run: |
+          curl -sLo kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-$(uname)-amd64
+          chmod +x kind
+          sudo mv kind /usr/local/bin/kind
 
+      - name: Create kind clusters
+        run: |
+          kind create cluster --name dev-cluster --wait 60s
+          kind create cluster --name prod-cluster --wait 60s
+
+  deploy-dev:
+      if: contains(github.ref, 'refs/heads/feature')
+      runs-on: ubuntu-latest
+      needs: docker
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+
+        - name: Install kind
+          run: |
+            curl -sLo kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-$(uname)-amd64
+            chmod +x kind
+            sudo mv kind /usr/local/bin/kind
+
+        - name: Create kind dev cluster
+          run: |
+            kind create cluster --name dev-cluster --wait 60s
+            kubectl cluster-info --context kind-dev-cluster
+
+        - name: Pull Docker Image
+          run: docker pull roku15/go-app:latest
+
+        - name: Load Image into kind
+          run: kind load docker-image roku15/go-app:latest --name dev-cluster
+
+        - name: Deploy to Dev Cluster
+          working-directory: k8s/test
+          run: |
+            kubectl apply -f deployment.yml --context kind-dev-cluster
+            kubectl apply -f service.yml --context kind-dev-cluster
+            kubectl get deployments --context kind-dev-cluster
+
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: docker
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Docker kind
-        uses: docker/setup-buildx-action@v2
-    
-      - name: Install kind 
+      - name: Install kind
         run: |
-          curl -sLo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-$(uname)-amd64
-          chmod +x ./kind
-          sudo mv ./kind /usr/local/bin/kind
-        
-      - name: Create kind test cluster
-        run: |
-          kind create cluster --name dev-cluster --wait 60s
-          kubectl cluster-info --context kind-dev-cluster
+          curl -sLo kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-$(uname)-amd64
+          chmod +x kind
+          sudo mv kind /usr/local/bin/kind
 
       - name: Create kind prod cluster
         run: |
@@ -116,59 +151,12 @@ jobs:
         run: docker pull roku15/go-app:latest
 
       - name: Load Docker Image into kind
-        run: kind load docker-image roku15/go-app:latest --name dev-cluster
-
-      - name: Load Docker Image into kind prod
         run: kind load docker-image roku15/go-app:latest --name prod-cluster
-      
-      - name: Deploy go app to dev cluster
-        working-directory: k8s/test
-        run: |
-          kubectl apply -f deployment.yml --context kind-dev-cluster
-          kubectl apply -f service.yml --context kind-dev-cluster
-          kubectl get deployment 
 
-      - name: Deploy go app to prod cluster
+      - name: Deploy to Prod Cluster
         working-directory: k8s/prod
         run: |
           kubectl apply -f deployment.yml --context kind-prod-cluster
           kubectl apply -f service.yml --context kind-prod-cluster
-          kubectl get deployment 
+          kubectl get deployments --context kind-prod-cluster
 
-  prod-deploy:
-    if: contains(github.ref, 'refs/heads/main')
-    runs-on: ubuntu-latest
-    needs: docker-build
-    env:
-      KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker kind
-        uses: docker/setup-buildx-action@v2
-    
-      - name: Install kind 
-        run: |
-          curl -sLo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-$(uname)-amd64
-          chmod +x ./kind
-          sudo mv ./kind /usr/local/bin/kind
-        
-      - name: Create kind prod cluster
-        run: |
-          kind create cluster --name prod-cluster --wait 60s
-          kubectl cluster-info --context kind-prod-cluster
-
-      - name: Pull Docker Image
-        run: docker pull roku15/go-app:latest
-
-      - name: Load Docker Image into kind prod
-        run: kind load docker-image roku15/go-app:latest --name prod-cluster
-      
-      - name: Deploy go app to prod cluster
-        working-directory: k8s/prod
-        run: |
-          kubectl apply -f deployment.yml --context kind-prod-cluster
-          kubectl apply -f service.yml --context kind-prod-cluster
-          kubectl get deployment
