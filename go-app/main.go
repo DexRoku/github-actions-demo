@@ -6,6 +6,7 @@ import (
 	_ "golang.org/x/mod/modfile" // dummy import to force go.sum
 )
 
+// This is a simple Go application that demonstrates basic arithmetic operations.
 func main() {
 	fmt.Println("Hello, GitHub Actions!")
 	fmt.Println("2 + 3 =", Add(2, 3))

@@ -1,0 +1,15 @@
+name: Giphy PR Comment
+description: Comment on PR with Giphy image
+inputs:
+  github_token:
+    description: 'GitHub token with permissions to comment on PR'
+    required: true
+  giphy_api_key:
+    description: 'Giphy API key to fetch images'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.github_token }}
+    - ${{ inputs.giphy_api_key }}
