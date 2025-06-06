@@ -26,5 +26,4 @@ WORKDIR /root/
 # Copy binary from builder
 COPY --from=builder /app/app .
 
-# Command to run the binary
 CMD ["./app"]
