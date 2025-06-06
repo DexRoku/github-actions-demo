@@ -1,0 +1,42 @@
+name: giphy-workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  giphy_job:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Post a Giphy Comment
+        uses: actions/github-script@v6
+        env:
+          GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fetch = require('node-fetch');
+
+            const res = await fetch(`https://api.giphy.com/v1/gifs/random?api_key=${process.env.GIPHY_API_KEY}&tag=success&rating=g`);
+            const data = await res.json();
+
+            const gifUrl = data?.data?.images?.original?.url;
+
+            if (!gifUrl) {
+              throw new Error("Failed to get Giphy image");
+            }
+
+            const body = `🎉 Here's a celebratory GIF!\n![GIF](${gifUrl})`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
