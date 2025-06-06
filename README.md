@@ -13,8 +13,16 @@ The goal of this project is to:
 * Build and push a Docker image
 * Deploy the application to local Kubernetes clusters using `kind`
 * Learn CI/CD concepts like workflows, jobs, caching, and multi-environment deployment
+* Integrate notifications and automation with Slack, Giphy, and AWS
 
----
+## 📦 Technologies Used
+
+* GitHub Actions
+* Docker
+* Kubernetes (kind)
+* Go
+* Giphy API
+* Slack API
 
 ## 📁 Repository Structure
 
@@ -63,20 +71,35 @@ The GitHub Actions workflow (`main.yml`) includes the following jobs:
 * Pulls and loads the Docker image into the cluster
 * Applies Kubernetes manifests for `test` and `prod` environments
 
+
+### 📢 Notifications
+
+* Sends Slack notifications on workflow status updates (success, failure)
+* Uses Giphy API to post fun reaction GIFs to Slack channels for build outcomes
+* Uses AWS CLI to deploy artifacts or update cloud resources (optional, extendable)
+
 ---
 
 ## ✅ How to Use
 
 1. Clone the repository:
 
-   ```bash
+```bash
    git clone https://github.com/your-username/github-actions-demo.git
    cd github-actions-demo
+```
+
+2. Setup environment secrets for integrations:
+   ```bash
+   * SLACK_WEBHOOK_URL — Slack Incoming Webhook URL for sending notifications
+   * GIPHY_API_KEY — Giphy API key to fetch GIFs
+   * AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY — AWS credentials for deployment tasks
    ```
+   Go to your repository settings, then **Secrets and variables** > **Actions** > **New repository secret** to add these secrets.
 
-2. Push changes to trigger the workflow
+3. Push changes to trigger the workflow
 
-3. Monitor the run in the **Actions** tab on GitHub
+4. Monitor the run in the **Actions** tab on GitHub
 
 ---
 
@@ -87,6 +110,10 @@ The GitHub Actions workflow (`main.yml`) includes the following jobs:
 * [Creating a Workflow](https://docs.github.com/en/actions/using-workflows)
 * [Go Programming Language](https://go.dev/)
 * [kind - Kubernetes IN Docker](https://kind.sigs.k8s.io/)
+* [Docker Documentation](https://docs.docker.com/)
+* [Slack API Documentation](https://api.slack.com/)
+* [Giphy API Documentation](https://developers.giphy.com/docs/)
+* [AWS CLI Documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
 
 ---
 
@@ -95,10 +122,12 @@ The GitHub Actions workflow (`main.yml`) includes the following jobs:
 * Add linter and formatter checks
 * Add integration testing
 * Add Helm chart support for deployment
-* Add GitHub Pages for documentation
 
 ---
 
 ## 🧑‍💻 Author
 
 Created by [Rohith Raju](https://github.com/DexRoku)
+
+## 📄 License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
