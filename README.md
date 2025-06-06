@@ -53,6 +53,7 @@ The GitHub Actions workflow (`main.yml`) includes the following jobs:
 * Caches dependencies
 * Runs unit tests
 
+
 ### 🐳 Docker Image
 
 * Builds and pushes the Docker image to Docker Hub
